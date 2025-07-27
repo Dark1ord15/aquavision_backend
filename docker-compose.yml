@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  aqua_db:
+    image: postgres:latest
+    container_name: aqua_postgres
+    environment:
+      POSTGRES_USER: aquavision
+      POSTGRES_PASSWORD: aquavision
+      POSTGRES_DB: aquavision
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio
+    container_name: aqua_minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"  # основной API
+      - "9001:9001"  # веб-консоль
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  minio_data:
